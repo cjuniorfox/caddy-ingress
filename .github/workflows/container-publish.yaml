@@ -1,0 +1,46 @@
+name: Build and public containerimage for caddy with homelab root-ca
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Build Image
+        id: build_image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          containersfile: |
+            ./Containerfile
+          image: caddy-ingress
+          tags: |
+            custom
+
+      - name: Login to Github container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Push image to GHCR
+        uses: redhat-actions/push-to-registry@v2
+        id: push
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+        with:
+          image: caddy-ingress
+          tags: custom
+          registry: ghcr.io
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
