@@ -44,6 +44,6 @@ jobs:
         with:
           image: caddy-ingress
           tags: custom
-          registry: ghcr.io
+          registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
