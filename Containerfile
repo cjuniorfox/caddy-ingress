@@ -1,4 +1,6 @@
-FROM docker.io/caddy/ingress:v0.2.1
+ARG SOURCE_TAG="v0.2.1"
+
+FROM docker.io/caddy/ingress:${SOURCE_TAG}
 
 COPY cloudstrife-ca.crt /usr/local/share/ca-certificates/cloudstrife-ca.crt
 
