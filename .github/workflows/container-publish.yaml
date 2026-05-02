@@ -13,6 +13,8 @@ jobs:
       contents: read
       packages: write
       id-token: write
+    env:
+      SOURCE_TAG: "v0.2.1"
     steps:
       - name: Checkout
         id: checkout
@@ -26,7 +28,9 @@ jobs:
             ./Containerfile
           image: caddy-ingress
           tags: |
-            custom
+            ${{ env.SOURCE_TAG }}
+          build-args: |
+            SOURCE_TAG=${{ env.SOURCE_TAG }}
 
       - name: Login to Github container registry
         uses: docker/login-action@v4
@@ -43,7 +47,7 @@ jobs:
           REGISTRY_PASSWORD: ${{ github.token }}
         with:
           image: caddy-ingress
-          tags: custom
+          tags: ${{ env.SOURCE_TAG }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
